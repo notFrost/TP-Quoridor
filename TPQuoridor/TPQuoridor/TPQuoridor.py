@@ -3,7 +3,7 @@ import pyglet.image as pyi
 import os
 
 #Generacion de la ventana
-Size = 600
+Size = 800
 window = pyglet.window.Window(width=Size,height=Size)
 
 imgBoard = pyi.load('Media/BoardHQ.png')
@@ -13,9 +13,12 @@ imgP1 = pyi.load('Media/Player1.png')
 imgP2 = pyi.load('Media/Player2.png')
 imgP3 = pyi.load('Media/Player3.png')
 imgP4 = pyi.load('Media/Player4.png')
-
+slotP1 = pyi.load('Media/SLOTP1.png')
+slotP2 = pyi.load('Media/SLOTP2.png')
+slotP3 = pyi.load('Media/SLOTP3.png')
+slotP4 = pyi.load('Media/SLOTP4.png')
 mtx_Ass = [imgBoard,imgSlot,imgWall,imgP1,imgP2,imgP3,imgP4]
-
+mtx_Alg_Ass = [slotP1,slotP2,slotP3,slotP4]
 #Configurar Engine Renderer
 Bruh=pyglet.graphics.Batch()
 Background = pyglet.graphics.OrderedGroup(0)
