@@ -9,19 +9,7 @@ window = pyglet.window.Window(width=Size,height=Size)
 
 imgBoard = pyi.load('Media/BoardHQ.png')
 imgSlot = pyi.load('Media/SlotHQ.png')
-imgWall = pyi.load('Media/WallHQ.png')
-imgP1 = pyi.load('Media/Player1.png')
-imgP2 = pyi.load('Media/Player2.png')
-imgP3 = pyi.load('Media/Player3.png')
-imgP4 = pyi.load('Media/Player4.png')
-slotP1 = pyi.load('Media/SLOTP1.png')
-slotP2 = pyi.load('Media/SLOTP2.png')
-slotP3 = pyi.load('Media/SLOTP3.png')
-slotP4 = pyi.load('Media/SLOTP4.png')
-mtx_Ass = [imgBoard,imgSlot,imgWall,imgP1,imgP2,imgP3,imgP4]
-mtx_Slot = [slotP1,slotP2,slotP3,slotP4]
 
-viewed, expanded,walls = [],[],[]
 Assets=[]
 f = open("Media/IndexMedia.txt", "r")
 for x in f:
@@ -139,6 +127,9 @@ class Node:
     return h+self.G
 
 #Checking Functions ##Tenemos que conseguir dimensions de algun lugar, esta en lectura de .txt
+def CheckMove(curr,Expa,View,Walls,next):
+    pass
+
 def CheckBorder(Pos):
   if (Pos[0]>=0 and Pos[0]<BoardSize) and (Pos[1]>=0 and Pos[1]<BoardSize):
     return True
@@ -158,6 +149,7 @@ def CheckArr(arr,Pos):
   return True
 
 def CheckWalls(arr,Pos):
+    return True
     pass
 
 def CheckF(Nod):
@@ -182,7 +174,7 @@ def Astar(expanded, viewed, walls, end):
     Nb.append((curr.Pos[0]+i,curr.Pos[1]))
   for next in Nb:
     #To do: Añadir implementacion de CheckWalls()
-    if CheckPrev(curr,next) and CheckBorder(next) and CheckArr(expanded,next) and CheckArr(viewed,next):
+    if CheckPrev(curr,next) and CheckBorder(next) and CheckArr(expanded,next) and CheckArr(viewed,next) and CheckWalls():
       viewed.append(Node(next,curr, end))
   #Add to expanded and Sort new Viewed List
   expanded.append(curr)
