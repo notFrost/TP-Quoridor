@@ -38,6 +38,7 @@
     <Content Include="Media\SLOTP2.png" />
     <Content Include="Media\SLOTP3.png" />
     <Content Include="Media\SLOTP4.png" />
+    <Content Include="Media\IndexMedia.txt" />
     <Content Include="Media\WallHQ.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />

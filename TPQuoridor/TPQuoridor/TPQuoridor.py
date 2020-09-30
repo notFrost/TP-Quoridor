@@ -3,8 +3,8 @@ import pyglet.image as pyi
 import os
 
 #Generacion de la ventana
-Size = 800
-BoardSize=20
+Size = 1000
+BoardSize=40
 window = pyglet.window.Window(width=Size,height=Size)
 
 imgBoard = pyi.load('Media/BoardHQ.png')
@@ -19,40 +19,99 @@ slotP2 = pyi.load('Media/SLOTP2.png')
 slotP3 = pyi.load('Media/SLOTP3.png')
 slotP4 = pyi.load('Media/SLOTP4.png')
 mtx_Ass = [imgBoard,imgSlot,imgWall,imgP1,imgP2,imgP3,imgP4]
-mtx_Alg_Ass = [slotP1,slotP2,slotP3,slotP4]
+mtx_Slot = [slotP1,slotP2,slotP3,slotP4]
+
+viewed, expanded,walls = [],[],[]
+Assets=[]
+f = open("Media/IndexMedia.txt", "r")
+for x in f:
+    x=x.strip()
+    Assets.append(x)
+
 #Configurar Engine Renderer
 Bruh=pyglet.graphics.Batch()
 Background = pyglet.graphics.OrderedGroup(0)
 BoardObj = pyglet.graphics.OrderedGroup(1)
 Foreground = pyglet.graphics.OrderedGroup(2)
+Players = pyglet.graphics.OrderedGroup(3)
 
 BkgrScale = Size/imgBoard.width
-Board=pyglet.sprite.Sprite(imgBoard,batch=Bruh,group=Background)
-Board.scale=BkgrScale
-
-mtx_Board = []
+BoardScale=BkgrScale
 SlotScale = BkgrScale*(9/BoardSize)
 Jump = imgSlot.width*SlotScale
 
-for x in range(BoardSize):
-    for y in range(BoardSize):
-        Slot = pyglet.sprite.Sprite(imgSlot,
-                                    int(Size/15)+Jump*x,
-                                    int(Size/15)+Jump*y,
-                                    batch=Bruh,group=BoardObj)
-        Slot.scale=SlotScale
-        mtx_Board.append(Slot)
-        pass
 class Engine:
-
-    def __init__(self,mtx_Ass):
-        self.mAss = mtx_Ass
+    def __init__(self,Ass_List):
+        self.mtxAssets = Ass_List
+        self.imgBank = []
+        self.SpriteBank = []
+        self.SpritePlayer = []
+        self.ArrPlayer = []
+        self.ArrPathing = []
+        self.LoadAssets()
+        self.viewed, self.expanded,self.walls = [],[],[]
         self.LoadEnv()
+        self.GeneratePlayers(4)
+        self.DrawPlayers()
+        self.ShowPath()
+
+    def LoadAssets(self):
+        for x in self.mtxAssets:
+            self.imgBank.append(pyi.load(x))
+        pass
 
     def LoadEnv(self):
-        Board=pyglet.sprite.Sprite(self.mAss[0],group=Background)
+        Board=pyglet.sprite.Sprite(self.imgBank[0],batch=Bruh,group=Background)
         print("Tablero Cargado")
+        Board.scale=BkgrScale
+        self.SpriteBank.append(Board)
 
+        for x in range(BoardSize):
+            for y in range(BoardSize):
+                Slot = pyglet.sprite.Sprite(self.imgBank[1],
+                                            int(Size/15)+Jump*x,
+                                            int(Size/15)+Jump*y,
+                                            batch=Bruh,group=BoardObj
+                                            )
+                Slot.scale=SlotScale
+                self.SpriteBank.append(Slot)
+        pass
+
+    def GeneratePlayers(self,Nplay):
+        self.ArrPlayer.append(Player(int(BoardSize/2)+4,0,
+                                     int(BoardSize/2),BoardSize-1,
+                                     0,self.imgBank[3],self.imgBank[7]))
+        self.ArrPlayer.append(Player(int(BoardSize/2)-6,BoardSize-1,
+                                     int(BoardSize/2),0,
+                                     1,self.imgBank[4],self.imgBank[8]))
+        self.ArrPlayer.append(Player(0,int(BoardSize/2)+5,
+                                     BoardSize-1,int(BoardSize/2),
+                                     2,self.imgBank[5],self.imgBank[9]))
+        self.ArrPlayer.append(Player(BoardSize-1,int(BoardSize/2)-5,
+                                     0,int(BoardSize/2),
+                                     3,self.imgBank[6],self.imgBank[10]))
+        pass
+
+    def DrawPlayers(self):
+        for x in self.ArrPlayer:
+            a=pyglet.sprite.Sprite(self.imgBank[3+x.Order],
+                             int(Size/15)+Jump*x.X,
+                             int(Size/15)+Jump*x.Y,
+                             batch=Bruh,group=Players)
+            a.scale=SlotScale
+            self.SpritePlayer.append(a)
+    
+    def ShowPath(self):
+        for x in range(4):
+            for node in self.ArrPlayer[x].TrazarRuta(self.expanded,self.viewed,self.walls):
+                rut = pyglet.sprite.Sprite(self.imgBank[7+x],
+                                           int(Size/15)+Jump*node.Pos[0],
+                                           int(Size/15)+Jump*node.Pos[1],
+                                           batch=Bruh,group=Foreground
+                                           )
+                rut.scale=SlotScale
+                self.ArrPathing.append(rut)
+                self.viewed,self.expanded = [],[]
 
 def finish(Node):
   Recorrido = []
@@ -98,6 +157,9 @@ def CheckArr(arr,Pos):
       return False
   return True
 
+def CheckWalls(arr,Pos):
+    pass
+
 def CheckF(Nod):
   return Nod.F
 
@@ -134,24 +196,14 @@ def Astar(expanded, viewed, walls, end):
  
 
 class Player:
-    def __init__(self,x,y,color,AssCol,AssPath):
+    def __init__(self,x,y,Ex,Ey,color,AssCol,AssPath):
         self.X=x
         self.Y=y
-        self.MetaX=BoardSize-1
-        self.MetaY=BoardSize-1
+        self.MetaX=Ex
+        self.MetaY=Ey
         self.Order=color
         self.Asset_Player=AssCol
         self.Asset_Path=AssPath
-        self.DefinirDireccion()
-
-    def DefinirDireccion(self):
-        if self.X==0:
-            self.MetaX=BoardSize-1
-            self.MetaY=int(BoardSize/2)
-        elif self.Y==0:
-            self.MetaX=int(BoardSize/2)
-            self.MetaY=BoardSize-1
-        pass
 
     def TrazarRuta(self,expanded,viewed,walls):
         self.Route=Routing((self.X,self.Y),expanded,viewed,walls,(self.MetaX,self.MetaY))
@@ -178,36 +230,11 @@ class Player:
 #Main
 #test
 
-viewed, expanded,walls = [],[],[]
+
 dimensions = [7,7]
 
-mtxPlayer=[]
-mtxPlayer.append(Player(int(BoardSize/2),0,1,imgP1,imgSlot))
-mtxPlayer.append(Player(int(BoardSize/2),BoardSize-1,1,imgP2,imgSlot))
-mtxPlayer.append(Player(0,int(BoardSize/2),1,imgP3,imgSlot))
-mtxPlayer.append(Player(BoardSize-1,int(BoardSize/2),1,imgP4,imgSlot))
 
-for x in mtxPlayer:
-    x.DrawPlayer(imgP1)
-
-#mtx_Path=[]
-#for node in objPlayer1.TrazarRuta(expanded,viewed,walls):
-##    rut = pyglet.sprite.Sprite(slotP1,
-#                                           int(Size/15)+Jump*node.Pos[0],
-#                                           int(Size/15)+Jump*node.Pos[1],
-##                                           batch=Bruh,group=Foreground)
-#    rut.scale=BkgrScale
-#    mtx_Path.append(rut)
-#
-#for node in objPlayer2.TrazarRuta(expanded,viewed,walls):
-#    rut = pyglet.sprite.Sprite(slotP2,
-#                                           int(Size/15)+Jump*node.Pos[0],
- #                                          int(Size/15)+Jump*node.Pos[1],
-  #                                         batch=Bruh,group=Foreground)
-   # rut.scale=BkgrScale
-   # mtx_Path.append(rut)
-
-#Game = Engine(mtx_Ass)
+Game = Engine(Assets)
 
 @window.event
 def on_draw():

@@ -1,0 +1,11 @@
+Media/BoardHQ.png
+Media/SlotHQ.png
+Media/WallHQ.png
+Media/Player1.png
+Media/Player2.png
+Media/Player3.png
+Media/Player4.png
+Media/SLOTP1.png
+Media/SLOTP2.png
+Media/SLOTP3.png
+Media/SLOTP4.png
