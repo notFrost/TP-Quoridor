@@ -4,7 +4,7 @@ import os
 
 #Generacion de la ventana
 Size = 1000
-BoardSize=40
+BoardSize=100
 window = pyglet.window.Window(width=Size,height=Size)
 
 imgBoard = pyi.load('Media/BoardHQ.png')
@@ -66,16 +66,16 @@ class Engine:
         pass
 
     def GeneratePlayers(self,Nplay):
-        self.ArrPlayer.append(Player(int(BoardSize/2)+4,0,
+        self.ArrPlayer.append(Player(int(BoardSize/2),0,
                                      int(BoardSize/2),BoardSize-1,
                                      0,self.imgBank[3],self.imgBank[7]))
-        self.ArrPlayer.append(Player(int(BoardSize/2)-6,BoardSize-1,
+        self.ArrPlayer.append(Player(int(BoardSize/2),BoardSize-1,
                                      int(BoardSize/2),0,
                                      1,self.imgBank[4],self.imgBank[8]))
-        self.ArrPlayer.append(Player(0,int(BoardSize/2)+5,
+        self.ArrPlayer.append(Player(0,int(BoardSize/2),
                                      BoardSize-1,int(BoardSize/2),
                                      2,self.imgBank[5],self.imgBank[9]))
-        self.ArrPlayer.append(Player(BoardSize-1,int(BoardSize/2)-5,
+        self.ArrPlayer.append(Player(BoardSize-1,int(BoardSize/2),
                                      0,int(BoardSize/2),
                                      3,self.imgBank[6],self.imgBank[10]))
         pass
@@ -111,7 +111,22 @@ def finish(Node):
   Recorrido.reverse()
   return Recorrido
 
-#Node
+def finishA(Node):
+  #recorre expanded desde el nodo end hasta que el nodo que estemos tenga como prev "start"
+  while Node.prev != False:
+    Recorrido.append(Node)
+    Node = Node.prev
+  Recorrido.append(Node)
+  return Recorrido
+
+
+#Node para DFS/BFS
+class NodeA:
+  def __init__(self, pos, pre):
+    self.Pos = pos
+    self.prev = pre
+
+#Node para A*
 class Node:
   def __init__(self, pos, pre, end):
     self.Pos = pos
@@ -148,9 +163,11 @@ def CheckArr(arr,Pos):
       return False
   return True
 
-def CheckWalls(arr,Pos):
+def CheckWalls(arr,curr,next):
+    for i in  arr:
+        if i==[curr.Pos,next] or i==[next,curr.Pos]:
+            return False
     return True
-    pass
 
 def CheckF(Nod):
   return Nod.F
@@ -160,7 +177,7 @@ def Routing(start,expanded,viewed,walls,end):
     viewed.append(Aux)
     return Astar(expanded, viewed, walls, end)
 
-#Main Aglorithm
+#A* Algorithm
 def Astar(expanded, viewed, walls, end):
   curr = viewed[0]
   if curr.Pos == end:
@@ -174,7 +191,7 @@ def Astar(expanded, viewed, walls, end):
     Nb.append((curr.Pos[0]+i,curr.Pos[1]))
   for next in Nb:
     #To do: Añadir implementacion de CheckWalls()
-    if CheckPrev(curr,next) and CheckBorder(next) and CheckArr(expanded,next) and CheckArr(viewed,next) and CheckWalls():
+    if CheckPrev(curr,next) and CheckBorder(next) and CheckArr(expanded,next) and CheckArr(viewed,next) and CheckWalls(walls,curr,next):
       viewed.append(Node(next,curr, end))
   #Add to expanded and Sort new Viewed List
   expanded.append(curr)
@@ -186,6 +203,48 @@ def Astar(expanded, viewed, walls, end):
   else:
     return false
  
+#BFS ALGORITHM
+def BFS (expanded, viewed, walls, end):
+  if viewed[0].Pos == end:
+    expanded.append(viewed[0])
+    print('End encontrado')
+    return finishA(viewed[0])
+  #Cardinal Verification
+  Nb = []
+  for i in [-1,1]:
+    Nb.append((viewed[0].Pos[0],viewed[0].Pos[1]+i))
+    Nb.append((viewed[0].Pos[0]+i,viewed[0].Pos[1]))
+  for next in Nb:
+    #To do: Añadir implementacion de CheckWalls()
+    if CheckPrev(viewed[0],next) and CheckBorder(next) and CheckArr(expanded,next) and CheckArr(viewed,next):
+      viewed.append(NodeA(next,viewed[0]))
+
+  #Add to expanded and Sort new Viewed List
+  expanded.append(viewed[0])
+  viewed.pop(0)
+  #Possibility Verification
+  if viewed:
+    return BFS(expanded, viewed, walls, end)
+  else:
+    return False
+
+#DFS ALGORITHM
+def DFS (checked, curr, walls, end):
+  #Cardinal Verification
+  if curr.Pos == end:
+    finishA(curr)
+    return True
+  checked.append(curr)
+  Nb = []
+  for i in [-1,1]:
+    Nb.append((curr.Pos[0],curr.Pos[1]+i))
+    Nb.append((curr.Pos[0]+i,curr.Pos[1]))
+  for next in Nb:
+    #To do: Añadir implementacion de CheckWalls()
+    if CheckBorder(next) and CheckArr(checked,next):
+      if DFS(checked, NodeA(next, curr), walls, end):
+        return True
+  return False
 
 class Player:
     def __init__(self,x,y,Ex,Ey,color,AssCol,AssPath):
@@ -218,13 +277,26 @@ class Player:
             rut.scale=BkgrScale
             mtx_Path.append(rut)
             
+#test
+dimensions = [7,7]
+start = [4,6]
+end = (2,0)
 
 #Main
-#test
+viewed, expanded, walls, Recorrido = [],[],[], []
+viewed.append(NodeA((start[0],start[1]), False))
+BFS(expanded, viewed, walls, end)
+print("BFS: ")
+for x in Recorrido:
+  print(x.Pos,end='')
+print()
 
-
-dimensions = [7,7]
-
+viewed, walls, Recorrido = [],[],[]
+print("DFS: ")
+DFS(viewed, NodeA((start[0],start[1]), False), walls, end)
+for x in Recorrido:
+  print(x.Pos,end='')
+print()
 
 Game = Engine(Assets)
 
