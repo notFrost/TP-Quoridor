@@ -66,16 +66,19 @@ class Engine:
         pass
 
     def GeneratePlayers(self,Nplay):
-        self.ArrPlayer.append(Player(int(BoardSize/2),0,
+        self.ArrPlayer.append(Player(int(BoardSize/2)-3,0,
                                      int(BoardSize/2),BoardSize-1,
                                      0,self.imgBank[3],self.imgBank[7]))
-        self.ArrPlayer.append(Player(int(BoardSize/2),BoardSize-1,
+
+        self.ArrPlayer.append(Player(int(BoardSize/2)+3,BoardSize-1,
                                      int(BoardSize/2),0,
                                      1,self.imgBank[4],self.imgBank[8]))
-        self.ArrPlayer.append(Player(0,int(BoardSize/2),
+
+        self.ArrPlayer.append(Player(0,int(BoardSize/2)-5,
                                      BoardSize-1,int(BoardSize/2),
                                      2,self.imgBank[5],self.imgBank[9]))
-        self.ArrPlayer.append(Player(BoardSize-1,int(BoardSize/2),
+
+        self.ArrPlayer.append(Player(BoardSize-1,int(BoardSize/2)+7,
                                      0,int(BoardSize/2),
                                      3,self.imgBank[6],self.imgBank[10]))
         pass
@@ -118,7 +121,6 @@ def finishA(Node):
     Node = Node.prev
   Recorrido.append(Node)
   return Recorrido
-
 
 #Node para DFS/BFS
 class NodeA:
