@@ -1,6 +1,8 @@
 Media/BoardHQ.png
 Media/SlotHQ.png
 Media/WallHQ.png
+Media/WallShadow.png
+Media/PlayerShadow.png
 Media/Player1.png
 Media/Player2.png
 Media/Player3.png
