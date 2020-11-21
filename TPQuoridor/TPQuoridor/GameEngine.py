@@ -1,31 +1,12 @@
 
 from InteractableClasses import *
 
-
-imgBoard = pyi.load('Media/BoardHQ.png')
-imgSlot = pyi.load('Media/SlotHQ.png')
-
-BOARD_BORDER = int(SIZE/15)
-
 Assets=[]
 f = open("Media/IndexMedia.txt", "r")
 for x in f:
     x=x.strip()
     Assets.append(x)
 
-
-#Configurar Engine Renderer
-Bruh=pyglet.graphics.Batch()
-Background = pyglet.graphics.OrderedGroup(0)
-BoardObj = pyglet.graphics.OrderedGroup(1)
-Foreground = pyglet.graphics.OrderedGroup(2)
-Walls = pyglet.graphics.OrderedGroup(4)
-Players = pyglet.graphics.OrderedGroup(3)
-
-BACKGROUND_SCALE = SIZE/imgBoard.width
-#BoardScale=BACKGROUND_SCALE
-SLOT_SCALE = BACKGROUND_SCALE*(9/BOARD_SIZE)
-JUMP = imgSlot.width*SLOT_SCALE
 
 class Engine:
     def __init__(self,Ass_List):
@@ -41,8 +22,8 @@ class Engine:
 
         self.load_env()
         self.generate_players(NUMPLAYERS)
-        self.draw_players()
-        #self.ShowPath()
+        #self.draw_players()
+        self.ShowPath()
 
     def load_env(self):
         #Esto Carga los Assets desde el txt
@@ -66,33 +47,24 @@ class Engine:
     def generate_players(self,Nplay):
         #Posiciones iniciales de los 4 Jugadores posibles
         #En orden van 0->Arriba 1->Abajo 2->Izquierda 3->Derecha
-        INITIAL_LOCATIONS = [(int(BOARD_SIZE/2)  ,  0),
-                             (int(BOARD_SIZE/2)  ,  BOARD_SIZE-1),
-                             (0                 ,  int(BOARD_SIZE/2)),
-                             (BOARD_SIZE-1       ,  int(BOARD_SIZE/2))]
-        for x in range(Nplay):
-            self.ArrPlayer.append(Player(INITIAL_LOCATIONS[x],x,self.imgBank[5+x],self.imgBank[7+x]))
+        INITIAL_LOCATIONS = [(int(BOARD_SIZE/2) +1 ,  0),
+                             (int(BOARD_SIZE/2) -1 ,  BOARD_SIZE-1),
+                             (0                 ,  int(BOARD_SIZE/2)    +1) ,
+                             (BOARD_SIZE-1       ,  int(BOARD_SIZE/2)   -1)]
 
-    def draw_players(self):
-        for x in self.ArrPlayer:
-            a=pyglet.sprite.Sprite(self.imgBank[5+x.Order],
-                             BOARD_BORDER+JUMP*x.X,
-                             BOARD_BORDER+JUMP*x.Y,
-                             batch=Bruh,group=Players)
-            a.scale=SLOT_SCALE
-            self.SpritePlayer.append(a)
-    
+        GOAL_LOCATIONS = [( int(BOARD_SIZE/2),BOARD_SIZE-1),
+                             (int(BOARD_SIZE/2),0),
+                             (BOARD_SIZE-1,int(BOARD_SIZE/2)),
+                             (0,int(BOARD_SIZE/2))]
+        for x in range(Nplay):
+            self.ArrPlayer.append(Player(INITIAL_LOCATIONS[x],GOAL_LOCATIONS[x],x,self.imgBank[5+x],self.imgBank[9+x]))
+
     def ShowPath(self):
-        for x in range(NUMPLAYERS):
-            for node in self.ArrPlayer[x].TrazarRuta(self.expanded,self.viewed,self.walls):
-                rut = pyglet.sprite.Sprite(self.imgBank[7+x],
-                                           BOARD_BORDER+JUMP*node.Pos[0],
-                                           BOARD_BORDER+JUMP*node.Pos[1],
-                                           batch=Bruh,group=Foreground
-                                           )
-                rut.scale=SLOT_SCALE
-                self.ArrPathing.append(rut)
-                self.viewed,self.expanded = [],[]
+        for x in self.ArrPlayer:
+            x.generate_route(self.expanded,self.viewed,self.walls)
+            x.show_route()
+            self.viewed, self.expanded,self.walls = [],[],[]
+        pass
 
     def key_command(self,key):
         if key==1:

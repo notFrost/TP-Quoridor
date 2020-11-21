@@ -99,7 +99,7 @@ def Astar(expanded, viewed, walls, end):
   if viewed:
     return Astar(expanded, viewed, walls, end)
   else:
-    return false
+    return False
  
 #BFS ALGORITHM
 def BFS (expanded, viewed, walls, end):
