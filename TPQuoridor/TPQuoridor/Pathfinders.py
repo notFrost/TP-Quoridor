@@ -44,7 +44,7 @@ def CheckMove(curr,Expa,View,Walls,next):
     pass
 
 def CheckBorder(Pos):
-  if (Pos[0]>=0 and Pos[0]<BOARDSIZE) and (Pos[1]>=0 and Pos[1]<BOARDSIZE):
+  if (Pos[0]>=0 and Pos[0]<BOARD_SIZE) and (Pos[1]>=0 and Pos[1]<BOARD_SIZE):
     return True
   return False
 

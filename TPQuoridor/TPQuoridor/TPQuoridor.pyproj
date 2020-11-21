@@ -21,10 +21,16 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="GameEngine.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="GameSettings.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Pathfinders.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="InteractableClasses.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="TPQuoridor.py" />
