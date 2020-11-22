@@ -18,7 +18,7 @@ class Engine:
         self.ArrPlayer = []
         self.ArrPathing = []
         self.viewed, self.expanded,self.walls = [],[],[]
-        self.WallShadow=False
+        self.wall_array=False
 
         self.load_env()
         self.generate_players(NUMPLAYERS)
@@ -43,6 +43,7 @@ class Engine:
                                             )
                 Slot.scale=SLOT_SCALE
                 self.SpriteBank.append(Slot)
+        self.wall_array=WallArray(self.imgBank[2],self.imgBank[3])
         
     def generate_players(self,Nplay):
         #Posiciones iniciales de los 4 Jugadores posibles
@@ -68,57 +69,16 @@ class Engine:
 
     def key_command(self,key):
         if key==1:
-            self.enable_wall_tracker()
-        elif self.WallShadow:
-            if key==2:
-                self.rotate_wall()
-            elif key==3:
-                self.PlaceWall()
-
-    def enable_wall_tracker(self):
-        self.WallShadow=pyglet.sprite.Sprite(self.imgBank[3],0,0,batch=Bruh,group=Walls)
-        self.WallShadow.scale=SLOT_SCALE
-
-    def rotate_wall(self):
-        if self.WallShadow.rotation==0:
-            self.WallShadow.rotation=90
-        else: 
-            self.WallShadow.rotation=0
+            self.wall_array.show_shadow_wall()
+        elif key==2:
+            self.wall_array.rotate_wall()
+        elif key==3:
+            self.PlaceWall()
 
     def PlaceWall(self):
-        X=self.WallShadow.x
-        Y=self.WallShadow.y
-        print("X: "+str(X) + ", Y: "+str(Y))
-        self.WallShadow.delete()
-        self.WallShadow=False
-
-    def wall_axis_adjuster(self,Mx,My,xini,yini,xlim,ylim):
-        if(Mx>xlim):
-            Bx=xlim
-        elif (Mx>xini+JUMP*0.5):
-            Bx=BOARD_BORDER+JUMP*(int(Mx//JUMP)-1)
-        else:
-            Bx=xini
-        if(My>ylim):
-            By=ylim
-        elif (My>yini+JUMP*0.5):
-            By=BOARD_BORDER+JUMP*(int(My//JUMP))
-        else:
-            By=yini
-        self.WallShadow.x=Bx
-        self.WallShadow.y=By
+        print("se coloco xd")
 
     def TrackMouse(self,Mx,My):
-        if(self.WallShadow):
-            if(self.WallShadow.rotation==90):
-                x_ini=BOARD_BORDER
-                y_ini=BOARD_BORDER+JUMP
-                x_limit=BOARD_BORDER+JUMP*(BOARD_SIZE-2)
-                y_limit=BOARD_BORDER+JUMP*(BOARD_SIZE-1)
-            else:
-                x_ini=BOARD_BORDER+JUMP
-                y_ini=BOARD_BORDER
-                x_limit=BOARD_BORDER+JUMP*(BOARD_SIZE-1)
-                y_limit=BOARD_BORDER+JUMP*(BOARD_SIZE-2)
-            self.wall_axis_adjuster(Mx,My,x_ini,y_ini,x_limit,y_limit) 
+        self.wall_array.evaluate_wall_placement(Mx,My)
+        pass
  

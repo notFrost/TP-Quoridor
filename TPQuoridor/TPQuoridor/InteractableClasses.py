@@ -8,14 +8,74 @@ Foreground = pyglet.graphics.OrderedGroup(2)
 Walls = pyglet.graphics.OrderedGroup(4)
 Players = pyglet.graphics.OrderedGroup(3)
 
-class Wall:
-    def __init__(self, *args, **kwargs):
-        return super().__init__(*args, **kwargs)
+class WallArray:
+    def __init__(self,wall_img,shadow_wall_img):
+        self.wall_array={}
+        self.wall_shadow=False
+        self.img_wall=wall_img
+        self.img_shadow_wall=shadow_wall_img
 
-    def evaluate_wall_placement():
+    #Agrega una pared de 1x1 al diccionario, retorna falso si la pared ya existe
+    def insert_wall(self,node_coord_1,node_coord_2):
+        if node_coord_1 in self.wall_array:
+            if node_coord_2 in self.wall_array[node_coord_1]:
+                return False
+            else:
+                self.wall_array[node_coord_1].append(node_coord_2)
+                return True
+        else:
+            self.wall_array[node_coord_1]=[node_coord_2]
+            return True
 
+    def insert_wall2(self,Px,Py):
+        self.wall_shadow.x=BOARD_BORDER+JUMP*Px
+        self.wall_shadow.y=BOARD_BORDER+JUMP*Py
+
+    def delete_this(self):
+        self.wall_shadow.delete()
+        self.wall_shadow=False
+
+    def rotate_wall(self):
+        if self.wall_shadow.rotation==0:
+            self.wall_shadow.rotation=90
+        else: 
+            self.wall_shadow.rotation=0
+
+    def check_valid_placement(self,Bx,By):
+        self.wall_shadow.x=BOARD_BORDER+JUMP*Bx
+        self.wall_shadow.y=BOARD_BORDER+JUMP*By
+        print("X: "+str(Bx)+", Y: "+str(By))
         pass
 
+    def wall_axis_adjuster(self,Mx,My,xini,yini,xlim,ylim):
+        Bx=min(xlim,max(xini,Mx))
+        By=min(ylim,max(yini,My))
+        return self.check_valid_placement(Bx,By)
+
+    def evaluate_wall_placement(self,Mx,My):
+        if(self.wall_shadow):
+            if(Mx>BOARD_BORDER and My>BOARD_BORDER):
+                Mx=int((Mx-BOARD_BORDER)//JUMP)
+                My=int((My-BOARD_BORDER)//JUMP)
+                if(self.wall_shadow):
+                    if(self.wall_shadow.rotation==90):
+                        x_ini=0
+                        y_ini=1
+                        x_limit=BOARD_SIZE-2
+                        y_limit=BOARD_SIZE-1
+                    else:
+                        x_ini=1
+                        y_ini=0
+                        x_limit=BOARD_SIZE-1
+                        y_limit=BOARD_SIZE-2
+                    return self.wall_axis_adjuster(Mx,My,x_ini,y_ini,x_limit,y_limit) 
+            else:
+                return False
+        else:
+            return False
+    def show_shadow_wall(self):
+        self.wall_shadow=pyglet.sprite.Sprite(self.img_shadow_wall,0,0,batch=Bruh,group=Walls)
+        self.wall_shadow.scale=SLOT_SCALE
 
 class Player:
     def __init__(self,initial_coords,goal_coords,color,AssCol,AssPath):
