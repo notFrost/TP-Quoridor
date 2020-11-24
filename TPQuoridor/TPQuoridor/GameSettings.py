@@ -3,7 +3,7 @@ import pyglet.image as pyi
 import os
 
 
-SIZE = 600
+SIZE = 800
 BOARD_SIZE=10
 NUMPLAYERS=3
 

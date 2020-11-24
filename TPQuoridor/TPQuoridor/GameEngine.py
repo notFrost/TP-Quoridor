@@ -49,7 +49,7 @@ class Engine:
         #Posiciones iniciales de los 4 Jugadores posibles
         #En orden van 0->Arriba 1->Abajo 2->Izquierda 3->Derecha
         INITIAL_LOCATIONS = [(int(BOARD_SIZE/2) +1 ,  0),
-                             (int(BOARD_SIZE/2) -1 ,  BOARD_SIZE-1),
+                             (int(BOARD_SIZE/2) -1   ,  BOARD_SIZE-1),
                              (0                 ,  int(BOARD_SIZE/2)    +1) ,
                              (BOARD_SIZE-1       ,  int(BOARD_SIZE/2)   -1)]
 
@@ -79,6 +79,6 @@ class Engine:
         print("se coloco xd")
 
     def TrackMouse(self,Mx,My):
-        self.wall_array.evaluate_wall_placement(Mx,My)
+        self.wall_array.refresh_shadow_pos(Mx,My)
         pass
  
