@@ -71,7 +71,6 @@ class Engine:
             self.viewed, self.expanded = [],[]
         pass
 
-
     def set_mode(self,key):
         """
         DESIGNACION DE LOS MODOS DEL JUEGO
@@ -88,15 +87,18 @@ class Engine:
                 self.walls.command_manager(key)
         elif self.mode==1:
             if key==3 or key==2:
+                self.walls.command_manager(key)
                 if key==3:
                     self.set_mode(0)
-                self.walls.command_manager(key)
+                    self.ShowPath()
+                
     
     def PlaceWall(self):
         print("se coloco xd")
 
     def TrackMouse(self,Mx,My):
         if self.mode==1:
-            self.walls.refresh_shadow_pos(Mx,My)
+            if self.walls.refresh_shadow_pos(Mx,My):
+               self.ShowPath()
         pass
  

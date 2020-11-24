@@ -34,6 +34,7 @@ class WallArray:
                 print("Se roto la sombra")
         elif key==3:
             if self.place_wall():
+                print(self.wall_array)
                 print("Se guardo pared")
             else:
                 print("Guardado incorrecto")
@@ -91,19 +92,23 @@ class WallArray:
             self.last_mouse=args
             Mx=int((args[0]-BOARD_BORDER)//JUMP)
             My=int((args[1]-BOARD_BORDER)//JUMP)
+            if (Mx,My)==self.shadow_pos:
+                print("No hay cambio")
+                return False
         else:
             Mx=int((self.last_mouse[0]-BOARD_BORDER)//JUMP)
             My=int((self.last_mouse[1]-BOARD_BORDER)//JUMP)
 
-        if(self.wall_shadow):
-            pos=self.__fix_shadow_position(Mx,My)
-            if type(pos)!=bool:
-                if self.wall_shadow.group==OutOfBounds:
-                    self.wall_shadow.group=Cursorobj
-                self.wall_shadow.x=BOARD_BORDER+JUMP*pos[0]
-                self.wall_shadow.y=BOARD_BORDER+JUMP*pos[1]
-                self.shadow_pos=(pos[0],pos[1])
-                return True
+        
+        pos=self.__fix_shadow_position(Mx,My)
+        if type(pos)!=bool:
+            if self.wall_shadow.group==OutOfBounds:
+                self.wall_shadow.group=Cursorobj
+            self.wall_shadow.x=BOARD_BORDER+JUMP*pos[0]
+            self.wall_shadow.y=BOARD_BORDER+JUMP*pos[1]
+            self.shadow_pos=(pos[0],pos[1])
+            print("SI HAY CAMBIO")
+            return True
         return False
 
     def __fix_shadow_position(self,Mx,My):
@@ -129,8 +134,8 @@ class WallArray:
 
     def __check_valid_placement(self,Bx,By):
         c1,c1_end,c2,c2_end=self.__create_coords(Bx,By)
-        print([c1,c1_end,c2,c2_end])
-        print(self.wall_array)
+        #print([c1,c1_end,c2,c2_end])
+        #print(self.wall_array)
         if self.__check_array(c1,c1_end) and self.__check_array(c2,c2_end):
             return True
         else:
@@ -183,6 +188,8 @@ class Player:
     def show_route(self):
         if(self.Change):
             self.mtx_Path=[]
+            for e in self.mtx_Path:
+                e.delete()
             for node in self.Route:
                 rut = pyglet.sprite.Sprite(self.Asset_Path,
                                             BOARD_BORDER+JUMP*node.Pos[0],
@@ -191,5 +198,3 @@ class Player:
                 rut.scale=SLOT_SCALE
                 self.mtx_Path.append(rut)
             self.Change=False
-        
-            

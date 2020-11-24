@@ -61,9 +61,11 @@ def CheckArr(arr,Pos):
       return False
   return True
 
-def CheckWalls(arr,curr,next):
-    for i in  arr:
-        if i==[curr.Pos,next] or i==[next,curr.Pos]:
+def CheckWalls(walls,curr,next):
+    if next>curr:
+        next,curr=curr,next
+    if curr in walls:
+        if next in walls[curr]:
             return False
     return True
 
@@ -89,7 +91,7 @@ def Astar(expanded, viewed, walls, end):
     Nb.append((curr.Pos[0]+i,curr.Pos[1]))
   for next in Nb:
     #To do: Añadir implementacion de CheckWalls()
-    if CheckPrev(curr,next) and CheckBorder(next) and CheckArr(expanded,next) and CheckArr(viewed,next) and CheckWalls(walls,curr,next):
+    if CheckPrev(curr,next) and CheckBorder(next) and CheckArr(expanded,next) and CheckArr(viewed,next) and CheckWalls(walls,curr.Pos,next):
       viewed.append(Node(next,curr, end))
   #Add to expanded and Sort new Viewed List
   expanded.append(curr)
