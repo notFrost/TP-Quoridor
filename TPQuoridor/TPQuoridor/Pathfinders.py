@@ -26,17 +26,17 @@ class NodeA:
 
 #Node para A*
 class Node:
-  def __init__(self, pos, pre, end):
+  def __init__(self, pos, pre, end,dir):
     self.Pos = pos
     self.prev = pre
     if self.prev!=False:
       self.G = self.prev.G+1
     else:
       self.G = 0
-    self.F = self.calcf(end)
+    self.F = self.calcf(end,dir)
 
-  def calcf(self, end):
-    h = abs(self.Pos[0]-end[0])+abs(self.Pos[1]-end[1])
+  def calcf(self, end,dir):
+    h = abs(self.Pos[dir]-end)
     return h+self.G
 
 #Checking Functions ##Tenemos que conseguir dimensions de algun lugar, esta en lectura de .txt
@@ -72,36 +72,35 @@ def CheckWalls(walls,curr,next):
 def CheckF(Nod):
   return Nod.F
 
-def Routing(start,expanded,viewed,walls,end):
-    Aux=Node(start, False, end)
+def Routing(start,expanded,viewed,walls,end,dir):
+    Aux=Node(start, False, end,dir)
     viewed.append(Aux)
-    return Astar(expanded, viewed, walls, end)
+    return Astar(expanded, viewed, walls, end,dir)
 
 #A* Algorithm
-def Astar(expanded, viewed, walls, end):
-  curr = viewed[0]
-  if curr.Pos == end:
+def Astar(expanded, viewed, walls, end,dir):
+    curr = viewed[0]
+    if curr.Pos[dir]==end:
+        expanded.append(curr)
+        #print('End encontrado')
+        return finish(curr)
+    #Cardinal Verification
+    Nb = []
+    for i in [-1,1]:
+        Nb.append((curr.Pos[0],curr.Pos[1]+i))
+        Nb.append((curr.Pos[0]+i,curr.Pos[1]))
+    for next in Nb:
+        if CheckPrev(curr,next) and CheckBorder(next) and CheckArr(expanded,next) and CheckArr(viewed,next) and CheckWalls(walls,curr.Pos,next):
+            viewed.append(Node(next,curr, end,dir))
+    #Add to expanded and Sort new Viewed List
     expanded.append(curr)
-    print('End encontrado')
-    return finish(curr)
-  #Cardinal Verification
-  Nb = []
-  for i in [-1,1]:
-    Nb.append((curr.Pos[0],curr.Pos[1]+i))
-    Nb.append((curr.Pos[0]+i,curr.Pos[1]))
-  for next in Nb:
-    #To do: Añadir implementacion de CheckWalls()
-    if CheckPrev(curr,next) and CheckBorder(next) and CheckArr(expanded,next) and CheckArr(viewed,next) and CheckWalls(walls,curr.Pos,next):
-      viewed.append(Node(next,curr, end))
-  #Add to expanded and Sort new Viewed List
-  expanded.append(curr)
-  viewed.pop(0)
-  viewed.sort(key=CheckF)
-  #Possibility Verification
-  if viewed:
-    return Astar(expanded, viewed, walls, end)
-  else:
-    return False
+    viewed.pop(0)
+    viewed.sort(key=CheckF)
+    #Possibility Verification
+    if viewed:
+        return Astar(expanded, viewed, walls, end,dir)
+    else:
+        return False
  
 #BFS ALGORITHM
 def BFS (expanded, viewed, walls, end):

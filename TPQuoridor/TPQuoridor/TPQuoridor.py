@@ -3,14 +3,23 @@ from GameEngine import *
 
 #Generacion de la ventana
 window = pyglet.window.Window(width=SIZE,height=SIZE)
+fps_display = pyglet.window.FPSDisplay(window=window)
 
 Game = Engine(Assets)
 WallTracker = False
 
+def update(dt): 
+        pass
+
+pyglet.clock.schedule_interval(update, 1/60)
+
 @window.event
 def on_draw():
+#    pyglet.clock.tick()
     window.clear()
     Bruh.draw()
+    fps_display.draw()
+
 
 @window.event
 def on_key_press(symbol, modifiers):

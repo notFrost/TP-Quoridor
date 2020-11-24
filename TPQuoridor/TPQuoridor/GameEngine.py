@@ -57,16 +57,24 @@ class Engine:
                              (0                 ,  int(BOARD_SIZE/2)    +1) ,
                              (BOARD_SIZE-1       ,  int(BOARD_SIZE/2)   -1)]
 
-        GOAL_LOCATIONS = [( int(BOARD_SIZE/2),BOARD_SIZE-1),
-                             (int(BOARD_SIZE/2),0),
-                             (BOARD_SIZE-1,int(BOARD_SIZE/2)),
-                             (0,int(BOARD_SIZE/2))]
+        GOAL_LOCATIONS = [  BOARD_SIZE-1,
+                             0,
+                            BOARD_SIZE-1,
+                            0]
+        DIR = [1,1,0,0]
         for x in range(Nplay):
-            self.ArrPlayer.append(Player(INITIAL_LOCATIONS[x],GOAL_LOCATIONS[x],x,self.imgBank[5+x],self.imgBank[9+x]))
+            self.ArrPlayer.append(Player(INITIAL_LOCATIONS[x],GOAL_LOCATIONS[x],DIR[x],self.imgBank[5+x],self.imgBank[9+x]))
 
     def ShowPath(self):
         for x in self.ArrPlayer:
             x.generate_route(self.expanded,self.viewed,self.walls.wall_array)
+            x.show_route()
+            self.viewed, self.expanded = [],[]
+        pass
+
+    def ShowFakePath(self):
+        for x in self.ArrPlayer:
+            x.generate_route(self.expanded,self.viewed,self.walls.wall_array_fake)
             x.show_route()
             self.viewed, self.expanded = [],[]
         pass
@@ -99,6 +107,7 @@ class Engine:
     def TrackMouse(self,Mx,My):
         if self.mode==1:
             if self.walls.refresh_shadow_pos(Mx,My):
-               self.ShowPath()
+                print(self.walls.wall_array)
+               #self.ShowFakePath()
         pass
  

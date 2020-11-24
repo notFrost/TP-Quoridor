@@ -14,6 +14,7 @@ class WallArray:
     def __init__(self,wall_img,shadow_wall_img):
         self.wall_sprite_array=[]
         self.wall_array={}
+        self.wall_array_fake={}
         self.wall_shadow=False
         self.shadow_pos=(0,0)
         self.img_wall=wall_img
@@ -56,12 +57,28 @@ class WallArray:
                 return False    
         return True
 
+#    def spoof_fake_wall(self):
+#        c1,c1_end,c2,c2_end=self.__create_coords(self.shadow_pos[0],self.shadow_pos[1])
+#        self.wall_array_fake=self.wall_array.copy()
+#        self.save_fake_wall(c1,c1_end)
+#        self.save_fake_wall(c2,c2_end)
+#        pass
+#
+#    def save_fake_wall(self,coord,coord_end):
+#        if coord not in self.wall_array_fake:
+#            self.wall_array_fake[coord]=[]
+#        self.wall_array_fake[coord].append(coord_end)
+#        return True
+#        pass
+
     def place_wall(self):
         if self.shadow_pos == (0,0):
             return False
         c1,c1_end,c2,c2_end=self.__create_coords(self.shadow_pos[0],self.shadow_pos[1])
         self.save_wall(c1,c1_end)
+        print(self.wall_array)
         self.save_wall(c2,c2_end)
+        print(self.wall_array)
         for c in [c1,c2]:
             wall=pyglet.sprite.Sprite(  self.img_wall,
                                         BOARD_BORDER+JUMP*c[0],
@@ -73,8 +90,8 @@ class WallArray:
         self.wall_shadow.delete()
         self.wall_shadow=False
         self.shadow_pos=(0,0)
+        print(self.wall_array)
         return True
-
 
     def save_wall(self,coord,coord_end):
         if coord not in self.wall_array:
@@ -93,13 +110,12 @@ class WallArray:
             Mx=int((args[0]-BOARD_BORDER)//JUMP)
             My=int((args[1]-BOARD_BORDER)//JUMP)
             if (Mx,My)==self.shadow_pos:
-                print("No hay cambio")
+                #print("No hay cambio")
                 return False
         else:
             Mx=int((self.last_mouse[0]-BOARD_BORDER)//JUMP)
             My=int((self.last_mouse[1]-BOARD_BORDER)//JUMP)
 
-        
         pos=self.__fix_shadow_position(Mx,My)
         if type(pos)!=bool:
             if self.wall_shadow.group==OutOfBounds:
@@ -107,7 +123,8 @@ class WallArray:
             self.wall_shadow.x=BOARD_BORDER+JUMP*pos[0]
             self.wall_shadow.y=BOARD_BORDER+JUMP*pos[1]
             self.shadow_pos=(pos[0],pos[1])
-            print("SI HAY CAMBIO")
+            #self.spoof_fake_wall()
+            #print("SI HAY CAMBIO")
             return True
         return False
 
@@ -144,7 +161,7 @@ class WallArray:
     def __check_array(self,coord,coord_end):
         if coord in self.wall_array:
             if coord_end in self.wall_array[coord]:
-                print("CONFLICTO")
+                #print("CONFLICTO")
                 return False
         return True
 
@@ -160,12 +177,11 @@ class WallArray:
             return (Bx,By),(Bx-1,By),(Bx,By+1),(Bx-1,By+1)
 
 class Player:
-    def __init__(self,initial_coords,goal_coords,color,AssCol,AssPath):
+    def __init__(self,initial_coords,goal_coords,direct,AssCol,AssPath):
         self.X=initial_coords[0]
         self.Y=initial_coords[1]
-        self.MetaX=goal_coords[0]
-        self.MetaY=goal_coords[1]
-        self.Order=color
+        self.Meta=goal_coords
+        self.Direction=direct
         self.Asset_Player=AssCol
         self.Asset_Path=AssPath
         self.Sprite=False
@@ -181,7 +197,7 @@ class Player:
         self.Sprite.scale=SLOT_SCALE
 
     def generate_route(self,expanded,viewed,walls):
-        self.Route=Routing((self.X,self.Y),expanded,viewed,walls,(self.MetaX,self.MetaY))
+        self.Route=Routing((self.X,self.Y),expanded,viewed,walls,self.Meta,self.Direction)
         self.Change=True
         return self.Route
 
