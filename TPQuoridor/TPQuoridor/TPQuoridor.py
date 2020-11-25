@@ -13,6 +13,7 @@ def update(dt):
 
 pyglet.clock.schedule_interval(update, 1/60)
 
+
 @window.event
 def on_draw():
 #    pyglet.clock.tick()
