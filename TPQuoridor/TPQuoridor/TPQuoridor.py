@@ -23,11 +23,22 @@ def on_draw():
 
 @window.event
 def on_key_press(symbol, modifiers):
-    if symbol == pyglet.window.key.Q:
-        Game.key_command(1)
-    elif symbol == pyglet.window.key.R:
+    if symbol == pyglet.window.key.R:
         Game.key_command(2)
-    elif symbol == pyglet.window.key.ENTER:
+    elif symbol == pyglet.window.key.W:
+        Game.key_command(4)
+    elif symbol == pyglet.window.key.A:
+        Game.key_command(5)
+    elif symbol == pyglet.window.key.S:
+        Game.key_command(6)
+    elif symbol == pyglet.window.key.D:
+        Game.key_command(7)
+
+@window.event
+def on_mouse_press(x, y, button, modifiers):
+    if button == pyglet.window.mouse.RIGHT:
+        Game.key_command(1)
+    elif button == pyglet.window.mouse.LEFT:
         Game.key_command(3)
 
 @window.event

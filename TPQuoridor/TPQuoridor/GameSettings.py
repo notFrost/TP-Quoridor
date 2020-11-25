@@ -4,8 +4,8 @@ import os
 
 
 SIZE = 800
-BOARD_SIZE=10
-NUMPLAYERS=3
+BOARD_SIZE=20
+NUMPLAYERS=4
 
 imgBoard = pyi.load('Media/BoardHQ.png')
 imgSlot = pyi.load('Media/SlotHQ.png')

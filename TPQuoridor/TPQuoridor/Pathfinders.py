@@ -26,7 +26,7 @@ class NodeA:
 
 #Node para A*
 class Node:
-  def __init__(self, pos, pre, end,dir):
+  def __init__(self, pos, pre, end, dir):
     self.Pos = pos
     self.prev = pre
     if self.prev!=False:
@@ -61,6 +61,7 @@ def CheckArr(arr,Pos):
       return False
   return True
 
+
 def CheckWalls(walls,curr,next):
     if next>curr:
         next,curr=curr,next
@@ -72,13 +73,32 @@ def CheckWalls(walls,curr,next):
 def CheckF(Nod):
   return Nod.F
 
-def Routing(start,expanded,viewed,walls,end,dir):
+
+def Routing(start,expanded,viewed,walls,end,dir, pieces):
     Aux=Node(start, False, end,dir)
     viewed.append(Aux)
-    return Astar(expanded, viewed, walls, end,dir)
+    return Astar(expanded, viewed, walls, end,dir, pieces)
+
+def CheckPieces(Pos, arrPlayer):
+    for x in arrPlayer:
+           if Pos[0] == x.Y and Pos[1] == x.X:
+               return False
+    return True
+
+#Movement
+def movePlayer(move, curr,expanded,viewed,walls, pieces):
+    next = (curr[0] + move[0], curr[1] + move[1])
+    if CheckBorder(next) and CheckWalls(walls,curr,next) and CheckPieces(next, pieces):
+        return True
+    return False
+
+def moveAi(arr):
+    for x in arr:
+        x.Y = x.Route[1].Pos[1]
+        x.X = x.Route[1].Pos[0]
 
 #A* Algorithm
-def Astar(expanded, viewed, walls, end,dir):
+def Astar(expanded, viewed, walls, end, dir, pieces):
     curr = viewed[0]
     if curr.Pos[dir]==end:
         expanded.append(curr)
@@ -90,15 +110,15 @@ def Astar(expanded, viewed, walls, end,dir):
         Nb.append((curr.Pos[0],curr.Pos[1]+i))
         Nb.append((curr.Pos[0]+i,curr.Pos[1]))
     for next in Nb:
-        if CheckPrev(curr,next) and CheckBorder(next) and CheckArr(expanded,next) and CheckArr(viewed,next) and CheckWalls(walls,curr.Pos,next):
-            viewed.append(Node(next,curr, end,dir))
+        if CheckPrev(curr,next) and CheckBorder(next) and CheckArr(expanded,next) and CheckArr(viewed,next) and CheckWalls(walls,curr.Pos,next) and CheckPieces(next, pieces):
+            viewed.append(Node(next,curr, end, dir))
     #Add to expanded and Sort new Viewed List
     expanded.append(curr)
     viewed.pop(0)
     viewed.sort(key=CheckF)
     #Possibility Verification
     if viewed:
-        return Astar(expanded, viewed, walls, end,dir)
+        return Astar(expanded, viewed, walls, end, dir, pieces)
     else:
         return False
  
@@ -144,3 +164,5 @@ def DFS (checked, curr, walls, end):
       if DFS(checked, NodeA(next, curr), walls, end):
         return True
   return False
+
+#Expanded, viewed, walls, end, dir

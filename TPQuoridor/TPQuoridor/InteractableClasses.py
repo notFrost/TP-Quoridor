@@ -178,8 +178,8 @@ class WallArray:
 
 class Player:
     def __init__(self,initial_coords,goal_coords,direct,AssCol,AssPath):
-        self.X=initial_coords[0]
-        self.Y=initial_coords[1]
+        self.Y=initial_coords[0]
+        self.X=initial_coords[1]
         self.Meta=goal_coords
         self.Direction=direct
         self.Asset_Player=AssCol
@@ -188,6 +188,7 @@ class Player:
         self.mtx_Path=False
         self.Change=True
         self.generate_sprite()
+        self.Route = []
         
     def generate_sprite(self):
         self.Sprite=pyglet.sprite.Sprite(self.Asset_Player,
@@ -196,8 +197,9 @@ class Player:
                              batch=Bruh,group=Players)
         self.Sprite.scale=SLOT_SCALE
 
-    def generate_route(self,expanded,viewed,walls):
-        self.Route=Routing((self.X,self.Y),expanded,viewed,walls,self.Meta,self.Direction)
+    
+    def generate_route(self,expanded,viewed,walls, arrPlayers):
+        self.Route=Routing((self.X,self.Y),expanded,viewed,walls,self.Meta,self.Direction, arrPlayers)
         self.Change=True
         return self.Route
 

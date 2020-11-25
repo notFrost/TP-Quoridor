@@ -52,13 +52,14 @@ class Engine:
        2->Arriba,Abajo,Izquierda 
        3->Arriba,Abajo,Izquierda,Derecha
         """
-        INITIAL_LOCATIONS = [(int(BOARD_SIZE/2) +1 ,  0),
-                             (int(BOARD_SIZE/2) -1   ,  BOARD_SIZE-1),
-                             (0                 ,  int(BOARD_SIZE/2)    +1) ,
-                             (BOARD_SIZE-1       ,  int(BOARD_SIZE/2)   -1)]
+        INITIAL_LOCATIONS = [(0,  int(BOARD_SIZE/2) +1),
+                             (BOARD_SIZE-1,  int(BOARD_SIZE/2) -1),
+                             (int(BOARD_SIZE/2) +1 ,  0),
+                             (int(BOARD_SIZE/2) -1   ,  BOARD_SIZE-1)
+                             ]
 
         GOAL_LOCATIONS = [  BOARD_SIZE-1,
-                             0,
+                            0,
                             BOARD_SIZE-1,
                             0]
         DIR = [1,1,0,0]
@@ -66,18 +67,18 @@ class Engine:
             self.ArrPlayer.append(Player(INITIAL_LOCATIONS[x],GOAL_LOCATIONS[x],DIR[x],self.imgBank[5+x],self.imgBank[9+x]))
 
     def ShowPath(self):
-        for x in self.ArrPlayer:
-            x.generate_route(self.expanded,self.viewed,self.walls.wall_array)
+        for x in self.ArrPlayer[1:]:
+            x.generate_route(self.expanded,self.viewed,self.walls.wall_array, self.ArrPlayer)
             x.show_route()
             self.viewed, self.expanded = [],[]
         pass
 
-    def ShowFakePath(self):
-        for x in self.ArrPlayer:
-            x.generate_route(self.expanded,self.viewed,self.walls.wall_array_fake)
-            x.show_route()
-            self.viewed, self.expanded = [],[]
-        pass
+   # def ShowFakePath(self):
+   #     for x in self.ArrPlayer:
+   #         x.generate_route(self.expanded,self.viewed,self.walls.wall_array_fake, self.ArrPlayer)
+   #         x.show_route()
+   #         self.viewed, self.expanded = [],[]
+   #     pass
 
     def set_mode(self,key):
         """
@@ -99,6 +100,35 @@ class Engine:
                 if key==3:
                     self.set_mode(0)
                     self.ShowPath()
+        if key > 3 and key <= 7:
+            if key == 4:
+                if movePlayer((0,1), (self.ArrPlayer[0].X, self.ArrPlayer[0].Y), self.expanded,self.viewed,self.walls.wall_array, self.ArrPlayer):
+                    self.ArrPlayer[0].Y += 1
+                    moveAi(self.ArrPlayer[1:])
+                    self.ShowPath()
+                    for x in self.ArrPlayer:
+                        x.generate_sprite()
+            elif key == 5:
+                if movePlayer((-1,0), (self.ArrPlayer[0].X, self.ArrPlayer[0].Y), self.expanded,self.viewed,self.walls.wall_array, self.ArrPlayer):
+                    self.ArrPlayer[0].X -= 1
+                    moveAi(self.ArrPlayer[1:])
+                    self.ShowPath()
+                    for x in self.ArrPlayer:
+                        x.generate_sprite()
+            elif key == 6:
+                if movePlayer((0,-1), (self.ArrPlayer[0].X, self.ArrPlayer[0].Y), self.expanded,self.viewed,self.walls.wall_array, self.ArrPlayer):
+                    self.ArrPlayer[0].Y -= 1
+                    moveAi(self.ArrPlayer[1:])
+                    self.ShowPath()
+                    for x in self.ArrPlayer:
+                        x.generate_sprite()
+            elif key == 7:
+                if movePlayer((1,0), (self.ArrPlayer[0].X, self.ArrPlayer[0].Y), self.expanded,self.viewed,self.walls.wall_array, self.ArrPlayer):
+                    self.ArrPlayer[0].X += 1
+                    moveAi(self.ArrPlayer[1:])
+                    self.ShowPath()
+                    for x in self.ArrPlayer:
+                        x.generate_sprite()
                 
     
     def PlaceWall(self):
