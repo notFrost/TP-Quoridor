@@ -21,6 +21,18 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="GameEngine.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GameSettings.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Pathfinders.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="InteractableClasses.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="TPQuoridor.py" />
   </ItemGroup>
   <ItemGroup>
@@ -33,6 +45,7 @@
     <Content Include="Media\Player2.png" />
     <Content Include="Media\Player3.png" />
     <Content Include="Media\Player4.png" />
+    <Content Include="Media\PlayerShadow.png" />
     <Content Include="Media\SlotHQ.png" />
     <Content Include="Media\SLOTP1.png" />
     <Content Include="Media\SLOTP2.png" />
@@ -40,6 +53,7 @@
     <Content Include="Media\SLOTP4.png" />
     <Content Include="Media\IndexMedia.txt" />
     <Content Include="Media\WallHQ.png" />
+    <Content Include="Media\WallShadow.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
